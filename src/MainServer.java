@@ -6,6 +6,7 @@ public class MainServer {
     static final int port = 2020;
 
     public void startAcceptingClients(){
+
         ServerSocket serverSocket;
         Socket newClient;
 

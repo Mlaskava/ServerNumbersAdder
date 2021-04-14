@@ -1,18 +1,33 @@
+import java.io.BufferedWriter;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 public class NumbersAdder implements Runnable{
 
     Socket client;
 
-    int offset = 0;
+    BufferedWriter lineWriter;
+
 
     NumbersAdder(Socket newClient){
         client = newClient;
+        try {
+            lineWriter = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     void addNumbersAndSend(String numbersToAdd){
-
+        try {
+            lineWriter.write(numbersToAdd);
+            lineWriter.flush();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -25,7 +40,6 @@ public class NumbersAdder implements Runnable{
             InputStreamReader inputStreamReader = new InputStreamReader(client.getInputStream());
             while(true){
                 builder.append((char) inputStreamReader.read());
-
                 if(builder.length() != 0 && builder.charAt(builder.length() - 1) == '\n'){
                     addNumbersAndSend(builder.toString());
                     builder.setLength(0);
