@@ -1,5 +1,8 @@
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainServer {
 
@@ -7,25 +10,25 @@ public class MainServer {
 
     public void startAcceptingClients(){
 
-        ServerSocket serverSocket;
-        Socket newClient;
+            ExecutorService addingStarter = Executors.newCachedThreadPool();
+            ServerSocket serverSocket;
+            Socket newClient;
 
-        try{
-            serverSocket = new ServerSocket(port);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-            return;
-        }
+            try{
+                serverSocket = new ServerSocket(port);
+                while(true){
 
-        while(true){
-            try {
-                newClient = serverSocket.accept();
-                new NumbersAdder(newClient).run();
+                    newClient = serverSocket.accept();
+                    addingStarter.submit(new NumbersAdder(newClient));
+
+                }
             }
+
             catch(Exception e){
                 e.printStackTrace();
             }
-        }
+
+
+
     }
 }
