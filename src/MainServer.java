@@ -6,6 +6,8 @@ import java.util.concurrent.Executors;
 
 public class MainServer {
 
+
+
     static final int port = 2020;
 
     public void startAcceptingClients(){
@@ -30,5 +32,9 @@ public class MainServer {
 
 
 
+    }
+    public static void main(String [] args){
+        MainServer server = new MainServer();
+        server.startAcceptingClients();
     }
 }
