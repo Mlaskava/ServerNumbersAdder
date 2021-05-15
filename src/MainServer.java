@@ -28,6 +28,7 @@ public class MainServer {
 
             catch(Exception e){
                 e.printStackTrace();
+                System.exit(1);
             }
 
 

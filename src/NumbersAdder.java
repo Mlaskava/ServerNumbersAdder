@@ -2,7 +2,6 @@ import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 
 public class NumbersAdder implements Runnable {
@@ -17,8 +16,9 @@ public class NumbersAdder implements Runnable {
         try {
             lineWriter = new BufferedWriter(new OutputStreamWriter(client.getOutputStream(), StandardCharsets.US_ASCII));
             reader = new InputStreamReader(client.getInputStream(), StandardCharsets.US_ASCII);
-            client.setSoTimeout(10000);
-        } catch (Exception e) {
+        }
+
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -88,25 +88,29 @@ public class NumbersAdder implements Runnable {
 
     void closeConnection(){
         try{
-            reader.close();
             lineWriter.close();
+            reader.close();
             client.close();
         }
         catch (Exception e){
+
             e.printStackTrace();
         }
     }
 
     @Override
     public void run() {
-        System.out.println(Thread.currentThread().getName());
         StringBuilder builder = new StringBuilder();
 
         try {
 
             while (true) {
-
-                builder.append((char) reader.read());
+                int c = reader.read();
+                if(c == -1){
+                    closeConnection();
+                    break;
+                }
+                builder.append((char) c);
                 if (builder.length() > 1 && builder.charAt(builder.length() - 2) == '\r' && builder.charAt(builder.length() - 1) == '\n') {
                     addNumbersAndSend(builder.substring(0, builder.length() - 2));
                     builder.setLength(0);
@@ -115,9 +119,8 @@ public class NumbersAdder implements Runnable {
             }
 
         }
-        catch (SocketTimeoutException e){
-            closeConnection();
-        }
+
+
         catch (Exception e) {
             e.printStackTrace();
         }
